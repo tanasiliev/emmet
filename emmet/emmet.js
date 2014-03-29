@@ -93,7 +93,7 @@ var emmet = (function () {
     };
 
     var getNode = function (str) {
-        var element = /([\w-]+)/.exec(str);
+        var element = /([\w-]+)/.exec(str).toLowerCase();
         if (!element) {
             throw "Invalid HTML tag!";
         }
