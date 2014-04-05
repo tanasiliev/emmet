@@ -93,7 +93,7 @@
     };
 
     var getNode = function (str) {
-        var element = /([\w-]+)/.exec(str).toLowerCase();
+        var element = /([\w-]+)/.exec(str);
         if (!element) {
             throw "Invalid HTML tag!";
         }
@@ -223,19 +223,19 @@
         return first.html;
     }
 
-    var result = {
+    var publicMethods =  {
         render: render,
 		append: append,
         appendTo: appendTo,
         appendBefore: appendBefore,
     }
-    
-    var emmet = window.emmet;
+	
+	var emmet = window.emmet;
 	if(!emmet){
-	   emmet = result;
+	   emmet = publicMethods;
 	   window.emmet = emmet;
 	}
-    
+	
 }());
 
 
