@@ -1,7 +1,7 @@
 /**
  A simplistic DOM Manipulation JavaScript library.
  @param string = " div#id.class>a[href=#]>span{text}^section*2 ";
- emmet.parse(string).append()
+ emmet.render(string).append()
  @result <div id="id" class="class">
            <a href="#">
 		      <span>text</span>
@@ -14,7 +14,7 @@
  Created by Atanas Iliev <the_wayfarer@abv.bg>
 */
 
-var emmet = (function () {
+(function () {
 
     var first = null;
     var current = null;
@@ -223,12 +223,19 @@ var emmet = (function () {
         return first.html;
     }
 
-    return {
+    var result = {
         render: render,
 		append: append,
         appendTo: appendTo,
         appendBefore: appendBefore,
     }
+    
+    var emmet = window.emmet;
+	if(!emmet){
+	   emmet = result;
+	   window.emmet = emmet;
+	}
+    
 }());
 
 
