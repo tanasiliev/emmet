@@ -3,16 +3,16 @@
  @param string = " div#id.class>a[href=#]>span{text}^section*2 ";
  emmet.render(string).append()
  @result <div id="id" class="class">
-           <a href="#">
-		      <span>text</span>
-		   </a>
-		   <section></section>
-		   <section></section>
-		 </div>
+ <a href="#">
+ <span>text</span>
+ </a>
+ <section></section>
+ <section></section>
+ </div>
  @returns the parent HTML element.
  This library is heavily inspired by emmet.io.
  Created by Atanas Iliev <the_wayfarer@abv.bg>
-*/
+ */
 
 (function () {
 
@@ -24,7 +24,7 @@
         this.parent = null;
         this.html = document.createElement(element);
         this.clones = null;
-    }
+    };
 
     Node.prototype = {
         append: function () {
@@ -40,7 +40,7 @@
             this.html.setAttribute(attr.name, attr.value);
         },
         text: function (text) {
-		    var text = document.createTextNode(text);
+            text = document.createTextNode(text);
             this.html.appendChild(text);
         }
     };
@@ -52,34 +52,44 @@
         first.parent = parentNode;
         first.append();
         current = first;
-    }
+    };
 
     var child = function (element) {
         var node = new Node(element);
         node.parent = current;
         node.append();
         current = node;
-    }
+    };
 
     var end = function () {
         current = current.parent || first.parent;
-    }
+    };
 
     var id = function (id) {
         current.id(id);
-    }
+    };
 
     var addClass = function (className) {
         current.addClass(className);
-    }
+    };
 
     var text = function (text) {
         current.text(text);
-    }
+    };
 
     var addAttr = function (attr) {
         current.setAttr(attr);
-    }
+    };
+
+    var getClasses = function (str) {
+        var classes = /\.([\w|\s.|-]+)/.exec(str);
+        if(classes)
+        {
+            var listClasses = classes[1].split(" ");
+            return listClasses;
+        }
+
+    };
 
     var getAttr = function (str) {
         var attributes = [];
@@ -98,7 +108,7 @@
             throw "Invalid HTML tag!";
         }
         var id = /#([\w-]+)/.exec(str);
-        var addClass = /\.([\w-.]+)/.exec(str);
+        var addClasses = getClasses(str);
         var text = /\{([^}]+)/.exec(str);
         var attributes = getAttr(str);
         var clones = /(\*)(\d)+/.exec(str);
@@ -107,12 +117,12 @@
             property: {}
         };
         id && (node.property.id = id[1]);
-        addClass && (node.property.addClass = addClass[1]);
+        addClasses && (node.property.addClass = addClasses);
         text && (node.property.text = text[1]);
         attributes.length && (node.property.attr = attributes);
         clones && (node.property.clones = clones[0].substr(1));
         return node;
-    }
+    };
 
     var cloneNode = function (node) {
         var cln = null;
@@ -120,7 +130,7 @@
             cln = node.html.cloneNode(true);
             node.parent.html.insertBefore(cln, node.html);
         }
-    }
+    };
 
     var parseNode = function (element, isFirst) {
         var node = getNode(element);
@@ -131,18 +141,18 @@
                     id(node.property[p]);
                     break;
                 case "addClass":
-                    var array = node.property[p].split(".");
+                    var array = node.property[p];
                     for (var i in array) {
                         addClass(array[i]);
                     }
                     break;
                 case "text":
-                    text(node.property[p])
+                    text(node.property[p]);
                     break;
                 case "attr":
-                    var listAttrubutes = node.property[p];
-                    for (var i in listAttrubutes) {
-                        var attribute = listAttrubutes[i];
+                    var listAttribute = node.property[p];
+                    for (var j in listAttribute) {
+                        var attribute = listAttribute[j];
                         var attr = attribute.split("=");
                         addAttr({ name: attr[0], value: attr[1] });
                     }
@@ -153,7 +163,7 @@
                     break;
             }
         }
-    }
+    };
 
     var parseRelation = function (sign) {
         switch (sign) {
@@ -165,11 +175,12 @@
                 end();
                 break;
         }
-    }
+    };
 
     var parseHtml = function (str) {
+        str = str.trim();
         var re = /[>+^]/g;
-        var result = re.exec(str.trim());
+        var result = re.exec(str);
         if (result == null && str.length > 0) {
             parseNode(str, true);
         }
@@ -180,14 +191,14 @@
             var relation = RegExp.lastMatch;
             parseNode(element, !index);
             parseRelation(relation);
-            var index = result.index;
+            index = result.index;
             result = re.exec(str);
             if (result == null) {
                 var lastElement = str.substring(index + 1, str.length);
                 parseNode(lastElement, !index);
             }
         }
-    }
+    };
 
     var render = function (str) {
         try {
@@ -201,51 +212,39 @@
             }
         }
         return this;
-    }
-	
-	var append = function () {
+    };
+
+    var append = function () {
         document.body.appendChild(first.parent.html);
         return first.html;
-    }
+    };
 
     var appendTo = function (element) {
-	    if (!element) {
+        if (!element) {
             throw "HTMLElement is required!";
         }
         element.appendChild(first.parent.html);
         return first.html;
-    }
+    };
     var appendBefore = function (element) {
         if (!element) {
             throw "HTMLElement is required!";
         }
-        element.parentElement.insertBefore(first.parent.html, element)
+        element.parentElement.insertBefore(first.parent.html, element);
         return first.html;
-    }
+    };
 
     var publicMethods =  {
         render: render,
-		append: append,
+        append: append,
         appendTo: appendTo,
-        appendBefore: appendBefore,
+        appendBefore: appendBefore
+    };
+
+    var emmet = window.emmet;
+    if(!emmet){
+        emmet = publicMethods;
+        window.emmet = emmet;
     }
-	
-	var emmet = window.emmet;
-	if(!emmet){
-	   emmet = publicMethods;
-	   window.emmet = emmet;
-	}
-	
+
 }());
-
-
-
-
-
-
-
-
-
-
-
-
