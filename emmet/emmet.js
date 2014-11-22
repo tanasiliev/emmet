@@ -1,13 +1,14 @@
 /**
  A simplistic DOM Manipulation JavaScript library.
- @param string = " div#id.class>a[href=#]>span{text}^section*2 ";
+ @param string = 'div#id.class>a[href=#]>span{text}^section*2';
  emmet.render(string).append()
- @result <div id="id" class="class">
- <a href="#">
- <span>text</span>
- </a>
- <section></section>
- <section></section>
+ @result 
+ <div id="id" class="class">
+  <a href="#">
+   <span>text</span>
+  </a>
+  <section></section>
+  <section></section>
  </div>
  @returns the parent HTML element.
  This library is heavily inspired by emmet.io.
