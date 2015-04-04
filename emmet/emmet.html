@@ -17,6 +17,54 @@
    
 </body>
 </html>
+<!--
+
+var getAttributes =  function(el){
+    var str = el.tagName.toLowerCase();
+    for(var i = 0, l = el.attributes.length; i < l; i++){
+       var atr = el.attributes[i];
+       if(atr.nodeName == "id"){
+          str += "#" + atr.nodeValue;
+       }
+       else if(atr.nodeName == "class"){
+          str += "." + atr.nodeValue;
+       }
+       else {
+          str += "[" + atr.nodeName + "=" + atr.nodeValue + "]"; 
+       }
+    }
+    return str;
+}
+
+var str = "";
+var depth = 0;
+var domLoop = function(el, parent){
+    str += getAttributes(el);
+    var children = el.children;
+    if(children.length){
+       str += ">";
+       depth++;
+       for(var i = 0; i< children.length; i++)
+          domLoop(children[i], el);
+    }else {
+       if(parent && parent.lastElementChild == el){
+          for (var i = 0; i < depth -1; i++){
+            str += "^";
+            depth--; 
+          }
+       } else {
+          str += "+";
+       }
+    } 
+    return str;
+}
+domLoop(document.children[0] )
+
+
+
+
+
+-->
 
 
 
